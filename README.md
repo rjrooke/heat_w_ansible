@@ -37,6 +37,9 @@ diskimage-builder/bin/disk-image-create vm   centos7 selinux-permissive \
     ansible \
     epel  \
     -o centos7-software-config.qcow2
+```
+Upload image to glance
+```
 glance image-create --file centos7-software-config.qcow2 --name centos7-software-config --progress --visibility public --container-format bare --disk-format qcow2
 [=============================>] 100%
 +------------------+-----------------------------------------------------------------+
@@ -60,7 +63,6 @@ glance image-create --file centos7-software-config.qcow2 --name centos7-software
 | virtual_size     | None                                                            |
 | visibility       | public                                                          |
 +------------------+-----------------------------------------------------------------+
-
 ```
 
 ### Heat template
@@ -74,3 +76,35 @@ Identify values for required parameters:
 - server_name: Name to give to the server
 - key_name: name of a nova keypair
   
+Create stack with appropriate parameters (I have defaults in template except for new image_id)
+```
+heat stack-create -f nginx_server.yml -P image_id=e4ce978a-5650-4752-8c44-7da160f32117 test-nginx
++--------------------------------------+------------+--------------------+---------------------+--------------+
+| id                                   | stack_name | stack_status       | creation_time       | updated_time |
++--------------------------------------+------------+--------------------+---------------------+--------------+
+| d9b24d6f-d81c-4c25-83db-ea2f1a6cbe19 | test-nginx | CREATE_IN_PROGRESS | 2016-09-22T20:23:37 | None         |
++--------------------------------------+------------+--------------------+---------------------+--------------+
+```
+Verify resources created
+```heat resource-list test-nginx 
++-----------------+--------------------------------------+---------------------------------+-----------------+---------------------+
+| resource_name   | physical_resource_id                 | resource_type                   | resource_status | updated_time        |
++-----------------+--------------------------------------+---------------------------------+-----------------+---------------------+
+| deploy_nginx    | 01623c2a-d146-4326-814d-50ec26953a48 | OS::Heat::SoftwareDeployment    | CREATE_COMPLETE | 2016-09-22T20:23:38 |
+| floatingip      | c54228b0-4c9b-45f7-be97-3d6817534dc9 | OS::Nova::FloatingIP            | CREATE_COMPLETE | 2016-09-22T20:23:38 |
+| floatingipassoc | 60                                   | OS::Nova::FloatingIPAssociation | CREATE_COMPLETE | 2016-09-22T20:23:38 |
+| nginx_config    | 20c39aa5-5064-456d-8d6d-285aed6f33c0 | OS::Heat::SoftwareConfig        | CREATE_COMPLETE | 2016-09-22T20:23:38 |
+| server          | c564d0a0-6bcb-41c5-a01f-c4aa8ad711db | OS::Nova::Server                | CREATE_COMPLETE | 2016-09-22T20:23:38 |
++-----------------+--------------------------------------+---------------------------------+-----------------+---------------------+
+```
+Get floating IP for VM
+```
+nova list
++--------------------------------------+----------------+---------+------------+-------------+---------------------------------+
+| ID                                   | Name           | Status  | Task State | Power State | Networks                        |
++--------------------------------------+----------------+---------+------------+-------------+---------------------------------+
+| c564d0a0-6bcb-41c5-a01f-c4aa8ad711db | centos_w_nginx | ACTIVE  | -          | Running     | private=172.0.2.74, 192.0.2.164 |
++--------------------------------------+----------------+---------+------------+-------------+---------------------------------+
+```
+Test nginx
+
