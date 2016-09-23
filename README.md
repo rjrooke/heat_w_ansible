@@ -67,7 +67,7 @@ glance image-create --file centos7-software-config.qcow2 --name centos7-software
 
 ### Heat template
 
-This template allocates a floating IP, so will have some available
+This [template](nginx_server.md) allocates a floating IP, so will have some available
 
 Identify values for required parameters:
 
