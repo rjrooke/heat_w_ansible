@@ -84,5 +84,32 @@ Create a simple server using the image with the Ansible hooks
       software_config_transport: POLL_TEMP_URL
       user_data_format: SOFTWARE_CONFIG
       name: { get_param: server_name }
+      security_groups: [ default, { get_resource: security_group } ]
+```
+Add a security group to make sure we can http, ssh and ping the instance
 
+```yaml
+  security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Enable http, ssh and icmp access to the server
+      name: 'SecurityGroup'
+      rules: [
+        { remote_group_id: null,
+        direction: ingress,
+        remote_ip_prefix: 0.0.0.0/0,
+        protocol: tcp,
+        port_range_max: 22,
+        port_range_min: 22,
+        ethertype: IPv4 },
+        { direction: ingress,
+        remote_ip_prefix: 0.0.0.0/0,
+        protocol: icmp,
+        ethertype: IPv4 },
+        { direction: ingress,
+        remote_ip_prefix: 0.0.0.0/0,
+        protocol: tcp,
+        port_range_max: 80,
+        port_range_min: 80,
+        ethertype: IPv4 } ]
 ```
