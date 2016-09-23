@@ -105,8 +105,17 @@ nova list
 +--------------------------------------+----------------+---------+------------+-------------+---------------------------------+
 | ID                                   | Name           | Status  | Task State | Power State | Networks                        |
 +--------------------------------------+----------------+---------+------------+-------------+---------------------------------+
-| c564d0a0-6bcb-41c5-a01f-c4aa8ad711db | centos_w_nginx | ACTIVE  | -          | Running     | private=172.0.2.74, 192.0.2.164 |
+| c564d0a0-6bcb-41c5-a01f-c4aa8ad711db | centos_w_nginx | ACTIVE  | -          | Running     | private=172.0.2.74, 192.0.2.144 |
 +--------------------------------------+----------------+---------+------------+-------------+---------------------------------+
 ```
 Test nginx
 
+```
+curl 192.0.2.144
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Test Page for the Nginx HTTP Server on Fedora</title>
+...
+```
