@@ -1,5 +1,3 @@
-Title: Openstack Heat with Ansible
-
 # OpenStack Heat with [Ansible](https://www.ansible.com/)
 
 ## Description
